@@ -170,7 +170,7 @@ def plot_rectified_objects(sequence,csv_file,frame_rate = 15):
 		frame = cv2.resize(frame,(1920,1080))
 		
 		cv2.imshow("frame",frame)
-		fileName = '../p1c2annote/' + format(frame_idx,"04d") + '.jpg'
+		fileName = '../p1c6annote/' + format(frame_idx,"04d") + '.jpg'
 		cv2.imwrite(fileName, frame)
         
 		key = cv2.waitKey(int(1000/float(frame_rate)))
