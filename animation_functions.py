@@ -1,31 +1,24 @@
-from utils import *
-import importlib
-import utils
-importlib.reload(utils)
-import os.path
-from os import path
+import os
 import matplotlib as matplot
 import matplotlib.pyplot as plt
 from matplotlib import cm
 import matplotlib.patches as patches
-import mplcursors
 import math
 import numpy as np
 import pandas as pd
 from datetime import datetime
 import cv2
-import os
+
+input_directory = r"C:\I24 Motion Project\YB Animation Software\csvData"
 
 class Animation :
-    def __init__(self) :
-        self.data_path = pathlib.Path().absolute().joinpath('../csvData')
-        
+    def __init__(self, filename) :
+        self.data_path = input_directory + "\\" + filename
         
     def csv_to_framesnaps(self, maxFrameNum=0) :
         # Divide all the data into frame numbers(1 ~ 2000). Then save each frame snapshot as a .jpg file 
         # within a separate folder to later create an animation.
-        self.file_name = self.data_path.joinpath('p1c2.csv')
-        df = read_full_data(self.file_name, 0)
+        df = read_full_data(self.data_path, 0)
         
         maxFrameNum = int(max(df['Frame #']))    # Find the maximum number of frame
         xmin, xmax = findMinMax('all')
@@ -106,16 +99,15 @@ class Animation :
     def csv_to_framesnap_synth(self) :
         # Divide all the data into frame numbers(1 ~ 2000). Then save each frame snapshot as a .jpg file 
         # within a separate folder to later create an animation.
-        self.file_name = self.data_path.joinpath('TM_1000_GT.csv')
-        df = read_synth_data(self.file_name, 0)
+        df = read_synth_data(self.data_path, 0)
         df = df.reindex(columns=['x','y','Frame #','Timestamp','ID','speed'])
         
         maxFrameNum = int(max(df['Frame #']))    # Find the maximum number of frame
-        xmin, xmax = 2000, 2400
+        xmin, xmax = 3000, 3800
         ymax = 20
         aspectRatio = (xmax-xmin) / (3 * ymax)
         
-        for i in range(maxFrameNum) :
+        for i in range(500) :
             # Plot dimension setup
             fig, ax = plt.subplots(figsize=(15,8))
             ax.set_aspect(aspectRatio)
@@ -145,12 +137,12 @@ class Animation :
             plt.title(i, fontdict={'fontsize':'x-large','fontweight':'bold'}, pad=20)
             # plt.subplots_adjust(top = 1, bottom = 0, right = 1, left = 0, hspace = 0, wspace = 0)
             # plt.margins(0,0)
-            plt.savefig('../Animation/Pictures/TM_1000_GT/' + format(i,"04d") + '.jpg', dpi=100)
+            plt.savefig('../Animation/Pictures/chunk10/' + format(i,"04d") + '.jpg', dpi=100)
 
 
     def animate(self) :
-        image_folder = '../Animation/Pictures/TM_1000_GT'
-        video_name = '../Animation/Videos/TM_1000_animation.mp4'
+        image_folder = '../Animation/Pictures/chunk10'
+        video_name = '../Animation/Videos/chunk10.mp4'
 
         images = [img for img in os.listdir(image_folder) if img.endswith(".jpg")]
         images.sort()
@@ -167,7 +159,7 @@ class Animation :
 
 
 def read_full_data(file_name, skiprows = 0, index_col = False):
-    df = pd.read_csv(file_name, skiprows = skiprows,error_bad_lines=False,index_col = index_col)
+    df = pd.read_csv(file_name, skiprows = skiprows, index_col = index_col)
     df = df[['bbr_x','bbr_y','fbr_x','fbr_y','fbl_x','fbl_y','bbl_x','bbl_y',
              'Frame #','Timestamp','ID','direction','speed']]
     
@@ -185,7 +177,7 @@ def read_full_data(file_name, skiprows = 0, index_col = False):
 
 
 def read_synth_data(file_name, skiprows = 0, index_col = False) :
-    df = pd.read_csv(file_name, skiprows = skiprows,error_bad_lines=False,index_col = index_col)
+    df = pd.read_csv(file_name, skiprows = skiprows, index_col = index_col)
     df = df[['x','y','Frame #','Timestamp','ID','speed']]
     
     return df
